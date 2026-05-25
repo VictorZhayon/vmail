@@ -16,6 +16,74 @@ const fmtDate = (d: string) =>
     year: 'numeric',
   })
 
+const fmtTimestamp = (ts: string) =>
+  new Date(ts).toLocaleString('en-NG', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+
+function TransactionColumn({
+  title,
+  transactions,
+  type,
+}: {
+  title: string
+  transactions: Transaction[]
+  type: 'income' | 'expense'
+}) {
+  const total = transactions.reduce((s, t) => s + Number(t.amount), 0)
+  const dotColor = type === 'income' ? 'bg-green-500' : 'bg-red-400'
+  const amountColor = type === 'income' ? 'text-green-600' : 'text-red-500'
+  const totalColor = type === 'income' ? 'text-green-600' : 'text-red-500'
+  const sign = type === 'income' ? '+' : '-'
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col">
+      {/* Column header */}
+      <div className="px-5 py-4 border-b border-gray-100 flex items-baseline justify-between">
+        <div className="flex items-baseline gap-2">
+          <h2 className="font-semibold text-gray-800">{title}</h2>
+          <span className="text-xs text-gray-400">
+            {transactions.length} record{transactions.length !== 1 ? 's' : ''}
+          </span>
+        </div>
+        <span className={`text-sm font-semibold ${totalColor}`}>{fmt(total)}</span>
+      </div>
+
+      {transactions.length === 0 ? (
+        <p className="text-center text-gray-400 py-12 text-sm px-4">No {type} records yet.</p>
+      ) : (
+        <ul className="divide-y divide-gray-50 flex-1">
+          {transactions.map(t => (
+            <li key={t.id} className="px-5 py-4 flex items-start gap-3">
+              <span className={`w-2 h-2 rounded-full flex-shrink-0 mt-1.5 ${dotColor}`} />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-sm font-medium text-gray-800">{t.category}</span>
+                  {t.customer_name && (
+                    <span className="text-xs text-gray-400 truncate">&middot; {t.customer_name}</span>
+                  )}
+                </div>
+                {t.note && (
+                  <p className="text-xs text-gray-400 truncate mt-0.5">{t.note}</p>
+                )}
+                <p className="text-xs text-gray-400 mt-1">{fmtDate(t.transaction_date)}</p>
+                <p className="text-xs text-gray-300 mt-0.5">Recorded {fmtTimestamp(t.created_at)}</p>
+              </div>
+              <span className={`text-sm font-semibold flex-shrink-0 ${amountColor}`}>
+                {sign}{fmt(Number(t.amount))}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 export default function LedgerView() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
@@ -35,12 +103,10 @@ export default function LedgerView() {
     return <p className="text-center text-red-500 py-16 text-sm">{error}</p>
   }
 
-  const totalIncome = transactions
-    .filter(t => t.type === 'income')
-    .reduce((s, t) => s + Number(t.amount), 0)
-  const totalExpense = transactions
-    .filter(t => t.type === 'expense')
-    .reduce((s, t) => s + Number(t.amount), 0)
+  const income = transactions.filter(t => t.type === 'income')
+  const expenses = transactions.filter(t => t.type === 'expense')
+  const totalIncome = income.reduce((s, t) => s + Number(t.amount), 0)
+  const totalExpense = expenses.reduce((s, t) => s + Number(t.amount), 0)
   const balance = totalIncome - totalExpense
 
   return (
@@ -63,17 +129,23 @@ export default function LedgerView() {
         </div>
       </div>
 
-      {/* Transaction list */}
+      {/* Two-column transaction view */}
+      <div className="grid grid-cols-2 gap-4 items-start">
+        <TransactionColumn title="Income" transactions={income} type="income" />
+        <TransactionColumn title="Expenses" transactions={expenses} type="expense" />
+      </div>
+
+      {/* Full transaction history */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 flex items-baseline gap-2">
           <h2 className="font-semibold text-gray-800">Transaction History</h2>
-          <span className="text-xs text-gray-400">{transactions.length} record{transactions.length !== 1 ? 's' : ''}</span>
+          <span className="text-xs text-gray-400">
+            {transactions.length} record{transactions.length !== 1 ? 's' : ''}
+          </span>
         </div>
 
         {transactions.length === 0 ? (
-          <p className="text-center text-gray-400 py-16 text-sm">
-            No transactions yet. Record your first one.
-          </p>
+          <p className="text-center text-gray-400 py-12 text-sm">No transactions yet. Record your first one.</p>
         ) : (
           <ul className="divide-y divide-gray-50">
             {transactions.map(t => (
@@ -99,6 +171,7 @@ export default function LedgerView() {
                     {t.type === 'income' ? '+' : '-'}{fmt(Number(t.amount))}
                   </p>
                   <p className="text-xs text-gray-400 mt-0.5">{fmtDate(t.transaction_date)}</p>
+                  <p className="text-xs text-gray-300 mt-0.5">Recorded {fmtTimestamp(t.created_at)}</p>
                 </div>
               </li>
             ))}

@@ -50,16 +50,16 @@ export default function TransactionForm() {
   }
 
   const inputClass =
-    'w-full border border-gray-200 rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500'
+    'w-full border border-gray-200 dark:border-gray-600 rounded-lg py-2 px-3 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors'
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">
-      <h2 className="text-lg font-semibold text-gray-800">Record Transaction</h2>
+    <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 space-y-5 transition-colors">
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Record Transaction</h2>
 
       {/* Type toggle */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Transaction Type</label>
-        <div className="flex rounded-lg border border-gray-200 overflow-hidden">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Transaction Type</label>
+        <div className="flex rounded-lg border border-gray-200 dark:border-gray-600 overflow-hidden">
           {(['income', 'expense'] as TransactionType[]).map(t => (
             <button
               key={t}
@@ -70,7 +70,7 @@ export default function TransactionForm() {
                   ? t === 'income'
                     ? 'bg-green-500 text-white'
                     : 'bg-red-500 text-white'
-                  : 'bg-white text-gray-500 hover:bg-gray-50'
+                  : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               {t}
@@ -81,7 +81,7 @@ export default function TransactionForm() {
 
       {/* Amount */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount</label>
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">&#8358;</span>
           <input
@@ -91,7 +91,7 @@ export default function TransactionForm() {
             required
             value={form.amount || ''}
             onChange={e => setForm(f => ({ ...f, amount: parseFloat(e.target.value) || 0 }))}
-            className="w-full border border-gray-200 rounded-lg py-2 pl-7 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className={`${inputClass} pl-7`}
             placeholder="0.00"
           />
         </div>
@@ -99,7 +99,7 @@ export default function TransactionForm() {
 
       {/* Category */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
         <select
           required
           value={form.category}
@@ -114,7 +114,7 @@ export default function TransactionForm() {
 
       {/* Date */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date</label>
         <input
           type="date"
           required
@@ -126,7 +126,7 @@ export default function TransactionForm() {
 
       {/* Customer / Vendor */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           {form.type === 'income' ? 'Customer' : 'Vendor'} Name{' '}
           <span className="text-gray-400 font-normal">(optional)</span>
         </label>
@@ -141,7 +141,7 @@ export default function TransactionForm() {
 
       {/* Note */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           Note <span className="text-gray-400 font-normal">(optional)</span>
         </label>
         <textarea
@@ -154,10 +154,10 @@ export default function TransactionForm() {
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>
+        <p className="text-sm text-red-600 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">{error}</p>
       )}
       {success && (
-        <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+        <p className="text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg px-3 py-2">
           Transaction saved successfully.
         </p>
       )}
@@ -165,7 +165,7 @@ export default function TransactionForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg text-sm transition-colors"
+        className="w-full bg-primary-600 hover:bg-primary-700 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg text-sm transition-colors"
       >
         {loading ? 'Saving...' : 'Save Transaction'}
       </button>

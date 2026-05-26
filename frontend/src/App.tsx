@@ -1,11 +1,21 @@
+import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import NavBar from './components/NavBar'
+import Onboarding from './components/Onboarding'
 import HomePage from './pages/HomePage'
 import LedgerPage from './pages/LedgerPage'
 import { useTheme } from './hooks/useTheme'
 
 export default function App() {
   const { isDark, toggle } = useTheme()
+  const [showOnboarding, setShowOnboarding] = useState(
+    () => !localStorage.getItem('onboarded')
+  )
+
+  function handleOnboardingDone() {
+    localStorage.setItem('onboarded', 'true')
+    setShowOnboarding(false)
+  }
 
   return (
     <BrowserRouter>
@@ -18,6 +28,7 @@ export default function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
+        {showOnboarding && <Onboarding onDone={handleOnboardingDone} />}
       </div>
     </BrowserRouter>
   )

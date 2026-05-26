@@ -43,10 +43,6 @@ export default function AccountPage() {
             <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{user?.email}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mb-0.5">Account ID</p>
-            <p className="text-xs font-mono text-gray-400 dark:text-gray-500 truncate">{user?.id}</p>
-          </div>
-          <div>
             <p className="text-xs text-gray-400 dark:text-gray-500 mb-0.5">Joined</p>
             <p className="text-sm text-gray-600 dark:text-gray-300">
               {user?.created_at

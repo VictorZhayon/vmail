@@ -3,6 +3,12 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt
 from .config import SUPABASE_JWT_SECRET
 
+if not SUPABASE_JWT_SECRET:
+    raise RuntimeError(
+        "Missing required environment variable: SUPABASE_JWT_SECRET must be set. "
+        "Find it in Supabase → Settings → API → JWT Settings → JWT Secret."
+    )
+
 _security = HTTPBearer()
 
 

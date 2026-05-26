@@ -101,6 +101,14 @@ export default function LedgerView() {
   if (error) {
     return <p className="text-center text-red-500 py-16 text-sm">{error}</p>
   }
+  if (transactions.length === 0) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-16 text-center transition-colors">
+        <p className="text-base font-semibold text-gray-500 dark:text-gray-400">No Transaction History</p>
+        <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">Your recorded transactions will appear here.</p>
+      </div>
+    )
+  }
 
   const income = transactions.filter(t => t.type === 'income')
   const expenses = transactions.filter(t => t.type === 'expense')

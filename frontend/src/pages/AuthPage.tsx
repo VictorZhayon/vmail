@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import logo from '../assets/logo.png'
@@ -163,6 +163,15 @@ export default function AuthPage() {
             {mode === 'signin' ? 'Sign up' : 'Sign in'}
           </button>
         </p>
+
+        {mode === 'signup' && (
+          <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-4 leading-relaxed">
+            By creating an account you agree to our{' '}
+            <Link to="/terms" className="text-primary-600 hover:underline">Terms of Service</Link>
+            {' '}and{' '}
+            <Link to="/privacy" className="text-primary-600 hover:underline">Privacy Policy</Link>.
+          </p>
+        )}
       </div>
     </div>
   )

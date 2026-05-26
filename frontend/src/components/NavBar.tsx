@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import logo from '../assets/logo.png'
+import { useAuth } from '../context/AuthContext'
 
 function SunIcon() {
   return (
@@ -32,6 +33,7 @@ interface NavBarProps {
 
 export default function NavBar({ isDark, onToggle }: NavBarProps) {
   const { pathname } = useLocation()
+  const { user, signOut } = useAuth()
 
   const link = (to: string, label: string) => (
     <Link
@@ -50,9 +52,14 @@ export default function NavBar({ isDark, onToggle }: NavBarProps) {
     <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors">
       <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
         <img src={logo} alt="VMail Solutions" className="h-10 w-auto" />
+
         <div className="flex items-center gap-6">
-          {link('/', 'New Transaction')}
-          {link('/ledger', 'Ledger')}
+          {user && (
+            <>
+              {link('/', 'New Transaction')}
+              {link('/ledger', 'Ledger')}
+            </>
+          )}
 
           {/* Theme toggle */}
           <button
@@ -62,12 +69,25 @@ export default function NavBar({ isDark, onToggle }: NavBarProps) {
           >
             <span className="text-yellow-500">{isDark ? <SunIcon /> : null}</span>
             <div className={`relative w-10 h-5 rounded-full transition-colors duration-200 ${isDark ? 'bg-primary-600' : 'bg-gray-300'}`}>
-              <span
-                className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${isDark ? 'translate-x-5' : 'translate-x-0'}`}
-              />
+              <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${isDark ? 'translate-x-5' : 'translate-x-0'}`} />
             </div>
             <span className="text-gray-400">{!isDark ? <MoonIcon /> : null}</span>
           </button>
+
+          {/* User */}
+          {user && (
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block max-w-[140px] truncate">
+                {user.email}
+              </span>
+              <button
+                onClick={signOut}
+                className="text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+              >
+                Sign out
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>

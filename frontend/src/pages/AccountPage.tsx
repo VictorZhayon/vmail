@@ -5,7 +5,7 @@ import { deleteAccount } from '../lib/api'
 import { supabase } from '../lib/supabase'
 
 export default function AccountPage() {
-  const { user, signOut } = useAuth()
+  const { user } = useAuth()
   const navigate = useNavigate()
   const [showModal, setShowModal] = useState(false)
   const [confirmation, setConfirmation] = useState('')

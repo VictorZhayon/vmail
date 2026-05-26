@@ -30,3 +30,14 @@ export async function getTransactions(): Promise<Transaction[]> {
   if (!res.ok) throw new Error('Failed to fetch transactions')
   return res.json()
 }
+
+export async function deleteAccount(): Promise<void> {
+  const res = await fetch(`${BASE}/account`, {
+    method: 'DELETE',
+    headers: await authHeaders(),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.detail ?? 'Failed to delete account')
+  }
+}

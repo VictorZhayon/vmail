@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import transactions
+from .routers import transactions, account
 
 app = FastAPI(title="AI Voice Ledger API", version="0.1.0")
 
@@ -21,6 +21,7 @@ app.add_middleware(
 )
 
 app.include_router(transactions.router)
+app.include_router(account.router)
 
 
 @app.get("/health")

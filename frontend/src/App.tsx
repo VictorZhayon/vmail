@@ -10,6 +10,7 @@ import HomePage from './pages/HomePage'
 import LedgerPage from './pages/LedgerPage'
 import PrivacyPage from './pages/PrivacyPage'
 import TermsPage from './pages/TermsPage'
+import AccountPage from './pages/AccountPage'
 import { useTheme } from './hooks/useTheme'
 
 export default function App() {
@@ -35,6 +36,7 @@ export default function App() {
               <Route path="/terms" element={<TermsPage />} />
               <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
               <Route path="/ledger" element={<ProtectedRoute><LedgerPage /></ProtectedRoute>} />
+              <Route path="/account" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>

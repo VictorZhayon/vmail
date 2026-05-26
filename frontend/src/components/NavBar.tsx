@@ -58,6 +58,7 @@ export default function NavBar({ isDark, onToggle }: NavBarProps) {
             <>
               {link('/', 'New Transaction')}
               {link('/ledger', 'Ledger')}
+              {link('/account', 'Account')}
             </>
           )}
 

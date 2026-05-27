@@ -40,16 +40,6 @@ async def update_transaction(
     transaction: TransactionUpdate,
     user_id: str = Depends(get_current_user_id),
 ):
-    existing = (
-        supabase.table("transactions")
-        .select("id")
-        .eq("id", transaction_id)
-        .eq("user_id", user_id)
-        .execute()
-    )
-    if not existing.data:
-        raise HTTPException(status_code=404, detail="Transaction not found")
-
     payload = {k: v for k, v in transaction.model_dump().items() if v is not None}
     if "amount" in payload:
         payload["amount"] = str(payload["amount"])
@@ -64,7 +54,7 @@ async def update_transaction(
         .execute()
     )
     if not result.data:
-        raise HTTPException(status_code=500, detail="Failed to update transaction")
+        raise HTTPException(status_code=404, detail="Transaction not found")
     return result.data[0]
 
 
@@ -73,14 +63,4 @@ async def delete_transaction(
     transaction_id: str,
     user_id: str = Depends(get_current_user_id),
 ):
-    existing = (
-        supabase.table("transactions")
-        .select("id")
-        .eq("id", transaction_id)
-        .eq("user_id", user_id)
-        .execute()
-    )
-    if not existing.data:
-        raise HTTPException(status_code=404, detail="Transaction not found")
-
     supabase.table("transactions").delete().eq("id", transaction_id).eq("user_id", user_id).execute()

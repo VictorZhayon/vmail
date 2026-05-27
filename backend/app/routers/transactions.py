@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
-from ..models import TransactionCreate
+from ..models import TransactionCreate, TransactionUpdate
 from ..database import supabase
 from ..auth import get_current_user_id
 
@@ -32,3 +32,55 @@ async def get_transactions(user_id: str = Depends(get_current_user_id)):
         .execute()
     )
     return result.data
+
+
+@router.patch("/{transaction_id}", response_model=dict)
+async def update_transaction(
+    transaction_id: str,
+    transaction: TransactionUpdate,
+    user_id: str = Depends(get_current_user_id),
+):
+    existing = (
+        supabase.table("transactions")
+        .select("id")
+        .eq("id", transaction_id)
+        .eq("user_id", user_id)
+        .execute()
+    )
+    if not existing.data:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+
+    payload = {k: v for k, v in transaction.model_dump().items() if v is not None}
+    if "amount" in payload:
+        payload["amount"] = str(payload["amount"])
+    if "transaction_date" in payload:
+        payload["transaction_date"] = str(payload["transaction_date"])
+
+    result = (
+        supabase.table("transactions")
+        .update(payload)
+        .eq("id", transaction_id)
+        .eq("user_id", user_id)
+        .execute()
+    )
+    if not result.data:
+        raise HTTPException(status_code=500, detail="Failed to update transaction")
+    return result.data[0]
+
+
+@router.delete("/{transaction_id}", status_code=204)
+async def delete_transaction(
+    transaction_id: str,
+    user_id: str = Depends(get_current_user_id),
+):
+    existing = (
+        supabase.table("transactions")
+        .select("id")
+        .eq("id", transaction_id)
+        .eq("user_id", user_id)
+        .execute()
+    )
+    if not existing.data:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+
+    supabase.table("transactions").delete().eq("id", transaction_id).eq("user_id", user_id).execute()

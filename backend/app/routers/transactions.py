@@ -46,9 +46,11 @@ async def update_transaction(
     if "transaction_date" in payload:
         payload["transaction_date"] = str(payload["transaction_date"])
 
+    supabase.table("transactions").update(payload).eq("id", transaction_id).eq("user_id", user_id).execute()
+
     result = (
         supabase.table("transactions")
-        .update(payload)
+        .select("*")
         .eq("id", transaction_id)
         .eq("user_id", user_id)
         .execute()
